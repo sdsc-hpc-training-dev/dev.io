@@ -1,3 +1,11 @@
+---
+layout: default
+title: Comet 101 Tutorial
+parent: Comet 101
+nav_order: 0
+---
+
+
 # Comet 101 Tutorial
 
 ## NOTES:

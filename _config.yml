@@ -14,9 +14,9 @@
 # You can create any custom variable you would like, and they will be accessible
 # in the templates via {{ site.myvariable }}.
 title: SDSC-101-Dev
-description: Read the docs for Expanse
-baseurl: "/dev.io/" # the subpath of your site, e.g. /blog
-url: "https://sdsc-hpc-training-dev.github.io" # the base hostname & protocol for your site, e.g. http://example.com
+description: SDSC-101 Dev branch
+baseurl: "/dev.io" # the subpath of your site, e.g. /blog
+url: "" # the base hostname & protocol for your site, e.g. http://example.com
 
 permalink: pretty
 exclude: ["node_modules/", "*.gemspec", "*.gem", "Gemfile", "Gemfile.lock", "package.json", "package-lock.json",  "script/", "LICENSE.txt", "lib/", "bin/", "README.md", "Rakefile"

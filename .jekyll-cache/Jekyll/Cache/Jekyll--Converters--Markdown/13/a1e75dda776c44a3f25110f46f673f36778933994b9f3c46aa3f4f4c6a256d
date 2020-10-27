@@ -1,0 +1,75 @@
+I"<h2 id="security-with-ssh-tunneling">Security with SSH Tunneling</h2>
+<p>Connection to Notebook over SSH tunneling (secure)</p>
+
+<p><img src="https://github.com/sdsc-hpc-training-org/notebooks-101/blob/master/Docs/images/jupyter-notebook-http-ssh-tunnel.png?raw=true" alt="connection over HTTP" /></p>
+
+<p>This section shows you how to launch a Jupyter Notebook using an interactive node or on a compute node, and to use ssh tunneling to securely connect to the notebook server.</p>
+
+<h3 id="interactive-node-method">Interactive Node Method</h3>
+<h4 id="open-two-terminals-on-your-computer">Open two terminals on your computer</h4>
+<p>We will use one terminal to start the notebook, and the other to establish the tunnel. Pick the first terminal, call it T1.</p>
+
+<h4 id="ssh-into-comet-from-your-local-computer">SSH into comet from your local computer:</h4>
+<p>In T1, <code class="language-plaintext highlighter-rouge">ssh user@comet.sdsc.edu</code>. This is just a regular SSH login.</p>
+
+<h4 id="claim-an-interactive-node">Claim an interactive node</h4>
+<p>In T1, <code class="language-plaintext highlighter-rouge">srun --partition=debug --pty --nodes=1 --ntasks-per-node=24 -t 00:30:00 --wait=0 --export=ALL /bin/bash</code></p>
+
+<p><a href="https://www.sdsc.edu/support/user_guides/comet.html">Source: Comet User Guide</a></p>
+
+<p>Feel free to adjust the parameters, but remember that in the debug partition you can only claim a node for up to 30 minutes. You can use other queues, but you may have to wait longer. Take note of the <code class="language-plaintext highlighter-rouge">&lt;node name&gt;</code> of the interactive node.</p>
+
+<h4 id="start-a-jupyter-notebook-server-on-the-interactive-node">Start a jupyter notebook server on the interactive node.</h4>
+<p>In T1, run the command
+<code class="language-plaintext highlighter-rouge">jupyter notebook --no-browser</code></p>
+
+<p>The <code class="language-plaintext highlighter-rouge">no browser</code> option is required, otherwise the program may think you want a text representation of your outputs in the terminal, which trust me - you don’t want.  You can also specify a port number if you wish using the <code class="language-plaintext highlighter-rouge">--port 1234</code> option. Note the value of the <code class="language-plaintext highlighter-rouge">&lt;jupyter port&gt;</code> number returned by the command.</p>
+
+<h4 id="create-ssh-tunnel-connection">Create SSH Tunnel Connection</h4>
+<p>In the next command, you will create an ssh connection between your local host and the notebook port on the remote, interactive node. When you connect your browser to the notebook service, this will channel all communications via the SSH connection, which is secure and encrypted.
+In the second terminal, call it T2, run the command</p>
+
+<p><code class="language-plaintext highlighter-rouge">ssh -L 8888:127.0.0.1:&lt;jupyter port&gt; user@comet-14-01.sdsc.edu</code>
+Replace <code class="language-plaintext highlighter-rouge">comet-14-01</code> with the name of the compute node. You can view the compute node in T1 prompt. Replace the <code class="language-plaintext highlighter-rouge">&lt;jupyter port&gt;</code> with the port the jupyter notebook started on  after running the <code class="language-plaintext highlighter-rouge">jupyter notebook --no-browser</code> command in window T1. The default jupyter port number is 8888, but don’t worry if its different.
+This establishes a tunnel between port 8888 on your computer and the jupyter port on the compute node</p>
+
+<h4 id="visit-the-port-in-your-local-browser">Visit the port in your local browser</h4>
+<p>In any browser, type in 127.0.0.1:8888 and you should get your notebook. You’ll have to input the jupyter token available in your terminal.</p>
+
+<p>If for some reason that address doesn’t work, check the output of the terminal. You could try using the address localhost:8888 or 0.0.0.0:8888. The reason tunneling is generally not the prefered method is because it is  complicated and the port numbers sometimes are not available by the time you access the service. And, you can’t know the port the jupyter notebook is going end up open on until you start it on the node, and you need to tunnel through that port… which is why we need two terminals in this example.</p>
+
+<h3 id="compute-node-method">Compute Node Method</h3>
+
+<p>In this example, we use a batch script to obtain a compute node, and to launch a jupyter lab or notebook. You can access the jupyter service directly from your browser once it has started running on the comet node. This method uses the SSH Tunneling method described above to make a secure SSH connection between your laptop and the Jupyter services.</p>
+
+<p>First, log onto comet using SSH.</p>
+
+<h4 id="copy-the-batch-script-example">Copy the batch script example</h4>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>#!/usr/bin/env bash
+#SBATCH --job-name=tensorflow-compute
+#SBATCH --partition=compute
+#SBATCH --time=00:30:00
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=24
+#SBATCH --output=tensorflow-compute.o%j.%N
+module purge
+module list
+printenv
+time -p singularity exec /share/apps/compute/singularity/images/tensorflow/tensorflow-cpu.simg jupyter lab --no-browser --ip="$(hostname)"
+</code></pre></div></div>
+
+<p>This example uses the tensorflow singularity container available on comet. You can use any container you want. If you check out <code class="language-plaintext highlighter-rouge">/share/apps/computer/singularity</code> you can find many useful containers. The key part of this example is how the jupyter lab is started at the end - <code class="language-plaintext highlighter-rouge">jupyter lab --no-browser --ip "${hostname}"</code>.</p>
+
+<h4 id="submit-this-script-to-the-queue">Submit this script to the queue</h4>
+<p>Simply run <code class="language-plaintext highlighter-rouge">sbatch run-jupyter-tensorflow-compute.sh</code>
+One thing you may want to do is change the script to be <code class="language-plaintext highlighter-rouge">--partition=debug</code> if you want a shorter wait time.</p>
+
+<h4 id="access-the-node-in-your-browser">Access the node in your browser</h4>
+<p>First, wait for the job to be submitted to the queue. Then, monitor the output file created by your batch job, which looks something like <code class="language-plaintext highlighter-rouge">tensorflow-compute.o%j.%N</code> if you used the example. Inside this file, you will see the output of the jupyterlab command. There, you should be able to see the port the jupyterlab server is running on, as well as the token you will need to login. My recommendation would be to just memorize the port number and copy the jupyter token. The port is almost always 8888 so it shouldn’t be that hard to remember. You will also need to know the comet node you are logged in on. You can view this by typing this command: <code class="language-plaintext highlighter-rouge">squeue -u $USER</code>. Under the NODELIST section you can see the comet node.</p>
+
+<p>Open up a new tab in your browser, and type in the following: <code class="language-plaintext highlighter-rouge">http://comet-xx-xx.sdsc.edu:PPPP</code> where <code class="language-plaintext highlighter-rouge">comet-xx-xx</code> is the comet node, <code class="language-plaintext highlighter-rouge">PPPP</code> is the port number (usually 8888). The jupyter notebook page should show up, and you can now paste in the token from the output file.</p>
+
+<h4 id="use-your-jupyterlabjupyter-notebook-server">Use your jupyterlab/jupyter notebook server!</h4>
+<p>Enjoy. Note that your notebook connection is <em>secured and encrypted</em>.</p>
+:ET

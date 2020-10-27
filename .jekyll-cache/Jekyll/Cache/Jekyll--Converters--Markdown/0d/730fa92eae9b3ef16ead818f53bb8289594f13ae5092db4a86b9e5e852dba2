@@ -1,0 +1,13 @@
+I"x<h2 id="hands-on-examples"><a name="hands-on"></a>Hands-on Examples</h2>
+<ul>
+  <li><a href="#comp-and-run-cuda-jobs">Compiling and Running GPU/CUDA Jobs</a></li>
+  <li><a href="#hello-world-gpu">GPU Hello World (GPU) </a></li>
+  <li><a href="#enum-gpu">GPU Enumeration </a></li>
+  <li><a href="#mat-mul-gpu">CUDA Mat-Mult</a></li>
+  <li><a href="#comp-and-run-cpu-jobs">Compiling and Running CPU Jobs</a></li>
+  <li><a href="#hello-world-mpi">Hello World (MPI)</a></li>
+  <li><a href="#hello-world-omp">Hello World (OpenMPI)</a></li>
+  <li><a href="#hybrid-mpi-omp">Compiling and Running Hybrid (MPI + OpenMP) Jobs</a></li>
+</ul>
+
+:ET

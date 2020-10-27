@@ -1,0 +1,15 @@
+I"<h1 id="example-notebooks">Example Notebooks</h1>
+<p>This page will be updated regularly with example notebooks, primarly for beginners and those who are new to using notebooks on Comet.</p>
+
+<h2 id="beginner-tutorials">Beginner Tutorials</h2>
+<ul>
+  <li><a href="https://github.com/sinkovit/PythonSeries">Python Series</a></li>
+  <li><a href="https://github.com/sdsc-hpc-training-org/notebook_examples/tree/master/Boring_Python">Boring Python Notebooks</a></li>
+  <li><a href="https://github.com/sdsc-hpc-training-org/notebook_examples">GPU Notebook Examples</a></li>
+</ul>
+
+<h2 id="more-advanced">More Advanced</h2>
+<ul>
+  <li><a href="https://github.com/sdsc-hpc-training-org/webinars/tree/master/201912_data_viz_python">Data Visualization With Python Using Jupyter Notebooks</a></li>
+</ul>
+:ET

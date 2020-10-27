@@ -1,0 +1,76 @@
+I"i<h2 id="insecurity-with-direct-node-access">Insecurity with direct node access</h2>
+
+<p>This section described how to connection between the browser on your local host (laptop) to a Jupyter service running on Comet over HTTP and demonstrates why the connection is <em>not</em> secure.</p>
+
+<p><img src="https://github.com/sdsc-hpc-training-org/notebooks-101/blob/master/Docs/images/jupyter-notebook-http.png?raw=true" alt="connection over HTTP" /></p>
+
+<h3 id="log-onto-cometsdscedu">Log onto comet.sdsc.edu</h3>
+
+<p><code class="language-plaintext highlighter-rouge">ssh -Y -l &lt;username&gt; &lt;system name&gt;.sdsc.edu</code></p>
+
+<ul>
+  <li>create a test directory, or <code class="language-plaintext highlighter-rouge">cd</code> into one you have already created</li>
+  <li>Clone the examples repository:
+<code class="language-plaintext highlighter-rouge">git clone https://github.com/sdsc-hpc-training-org/notebook-examples.git</code></li>
+</ul>
+
+<h3 id="launch-a-notebook-on-the-login-node">Launch a notebook on the login node:</h3>
+<p>Run the jupyter command. Be sure to set the –ip to use the hostname, which will appear in your URL :
+<code class="language-plaintext highlighter-rouge">[mthomas@comet-14-01:~] jupyter notebook  --no-browser --ip='/bin/hostname'</code></p>
+
+<p>You will see output similar to below:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[I 08:06:32.961 NotebookApp] JupyterLab extension loaded from /home/mthomas/miniconda3/lib/python3.7/site-packages/jupyterlab
+[I 08:06:32.961 NotebookApp] JupyterLab application directory is /home/mthomas/miniconda3/share/jupyter/lab
+[I 08:06:33.486 NotebookApp] Serving notebooks from local directory: /home/mthomas
+[I 08:06:33.487 NotebookApp] The Jupyter Notebook is running at:
+[I 08:06:33.487 NotebookApp] http://comet-14-01.sdsc.edu:8888/?token=6d7a48dda7cc1635d6d08f63aa1a696008fa89d8aa84ad2b
+[I 08:06:33.487 NotebookApp]  or http://127.0.0.1:8888/?token=6d7a48dda7cc1635d6d08f63aa1a696008fa89d8aa84ad2b
+[I 08:06:33.487 NotebookApp] Use Control-C to stop this server and shut down all kernels (twice to skip confirmation).
+[C 08:06:33.494 NotebookApp]
+
+    To access the notebook, open this file in a browser:
+        file:///home/mthomas/.local/share/jupyter/runtime/nbserver-6614-open.html
+    Or copy and paste one of these URLs:
+        http://comet-14-01.sdsc.edu:8888/?token=6d7a48dda7cc1635d6d08f63aa1a696008fa89d8aa84ad2b
+     or http://127.0.0.1:8888/?token=6d7a48dda7cc1635d6d08f63aa1a696008fa89d8aa84ad2b
+[I 08:06:45.773 NotebookApp] 302 GET /?token=6d7a48dda7cc1635d6d08f63aa1a696008fa89d8aa84ad2b (76.176.117.51) 0.74ms
+[E 08:06:45.925 NotebookApp] Could not open static file ''
+[W 08:06:46.033 NotebookApp] 404 GET /static/components/react/react-dom.production.min.js (76.176.117.51) 7.39ms referer=http://comet-14-01.sdsc.edu:8888/tree?token=6d7a48dda7cc1635d6d08f63aa1a696008fa89d8aa84ad2b
+[W 08:06:46.131 NotebookApp] 404 GET /static/components/react/react-dom.production.min.js (76.176.117.51) 1.02ms referer=http://comet-14-01.sdsc.edu:8888/tree?token=6d7a48dda7cc1635d6d08f63aa1a696008fa89d8aa84ad2b
+</code></pre></div></div>
+
+<p>Notice that the notebook URL is using HTTP, and when you connect the browser on your local sysetm to this URL, the connection will <em>not</em> be secure. Note: it is against SDSC Comet policy to run applications on the login nodes, and any applications being run will be killed by the system admins. A better way is to run the jobs on an interactive node or on a compute node using the batch queue (see the <a href="https://comet.sdsc.edu">Comet User Guide</a>), or on a compute node, which is described in the next sections.</p>
+
+<h3 id="obtain-an-interactive-node">Obtain an interactive node:</h3>
+<p>Jobs can be run on the cluster in <code class="language-plaintext highlighter-rouge">batch mode</code> or in <code class="language-plaintext highlighter-rouge">interactive mode</code>. Batch jobs are performed remotely and without manual intervention. Interactive mode enable you to run/compile your program and environment setup on a compute node dedicated to you. To obtain an interactive node, type:
+<code class="language-plaintext highlighter-rouge">srun --pty --nodes=1 --ntasks-per-node=24 -p compute -t 02:00:00 --wait 0 /bin/bash</code>
+You will have to wait for your node to be allocated - which can take a few or many minutes. You will see pending messages like the ones below:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>srun: job 24000544 queued and waiting for resources
+srun: job 24000544 has been allocated resources
+[mthomas@comet-18-29:~/hpctrain/python/PythonSeries]
+</code></pre></div></div>
+
+<p>You can also check the status of jobs in the queue system to get an idea of how long you may need to wait.</p>
+
+<p>Launch the Jupyter Notebook application.
+Note: this application will be running on a compute node, and you must keep track of the given URL:</p>
+
+<p><code class="language-plaintext highlighter-rouge">jupyter notebook --no-browser --ip='/bin/hostname'</code></p>
+
+<p>This will give you an address which has localhost in it and a token. Something
+like:
+<code class="language-plaintext highlighter-rouge">http://comet-14-0-4:8888/?token=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</code>
+You can then paste it into your browser. You will see a running Jupyter
+notebook and a listing of the notebooks in your directory. From there everything should be working as a regular notebook.
+Note: This token is your auth so don’t email/send it around. It will go away when you stop the notebook.</p>
+
+<p>To learn about Python, run the <code class="language-plaintext highlighter-rouge">Python basics.ipynb</code>   notebook.
+To see an example of remote visualization, run the  <code class="language-plaintext highlighter-rouge">Matplotlib.ipynb</code>  notebook!</p>
+
+<h4 id="access-the-node-in-your-browser">Access the node in your browser</h4>
+<p>Copy the the URL above into the browser running on your laptop.</p>
+
+<h4 id="use-your-jupyterlabjupyter-notebook-server">Use your jupyterlab/jupyter notebook server!</h4>
+<p>Enjoy. Note that your notebook is unsecured.</p>
+:ET

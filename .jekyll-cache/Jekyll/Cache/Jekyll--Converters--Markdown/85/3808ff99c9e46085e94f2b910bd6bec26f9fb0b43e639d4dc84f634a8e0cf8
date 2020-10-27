@@ -1,0 +1,11 @@
+I"<h1 id="jupyter-services-on-comet">Jupyter Services on Comet</h1>
+
+<p>Overview of this section
+You can access a jupyter notebook directly from your browser after starting it on the login node. This method is insecure, and will result in a notebook served over http, which is not something you want to be using on a regular basis.</p>
+
+<h2 id="access-the-node-in-your-browser">Access the node in your browser</h2>
+<p>Copy the the URL above into the browser running on your laptop.</p>
+
+<h3 id="use-your-jupyterlabjupyter-notebook-server">Use your jupyterlab/jupyter notebook server!</h3>
+<p>Enjoy. Note that your notebook is unsecured.</p>
+:ET

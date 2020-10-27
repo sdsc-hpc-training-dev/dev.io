@@ -1,0 +1,499 @@
+I"�T<h2 id="compiling-and-running-gpucuda-jobs"><a name="comp-and-run-cuda-jobs"></a>Compiling and Running GPU/CUDA Jobs</h2>
+<p><b>Sections:</b></p>
+<ul>
+  <li><a href="#hello-world-gpu">GPU Hello World (GPU) </a></li>
+  <li><a href="#enum-gpu">GPU Enumeration </a></li>
+  <li><a href="#mat-mul-gpu">CUDA Mat-Mult</a></li>
+</ul>
+
+<p>Note: Expanse provides both NVIDIA K80 and P100 GPU-based resources. These GPU nodes
+are allocated as separate resources. Make sure you have enough allocations and that
+you are using the right account. For more details and current information about the
+Expanse GPU nodes, see the <a href="https://www.sdsc.edu/support/user_guides/expanse.html#gpu">Expanse User Guide</a>.</p>
+
+<p><b> Expanse GPU Hardware: </b> <br />
+<a name="gpu-hardware"></a><img src="images/expanse-gpu-hardware.png" alt="Expanse GPU Hardware" width="500px" /></p>
+
+<h2 id="in-order-to-compile-the-cuda-code-you-need-to-load-the-cuda-module-and-verify">In order to compile the CUDA code, you need to load the CUDA module and verify</h2>
+<p>that you have access to the CUDA compile command, <code class="language-plaintext highlighter-rouge">nvcc:</code></p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[mthomas@expanse-ln3:~/expanse101] module list
+Currently Loaded Modulefiles:
+1) intel/2018.1.163    2) mvapich2_ib/2.3.2
+[mthomas@expanse-ln3:~/expanse101] module purge
+[mthomas@expanse-ln3:~/expanse101] module load cuda
+[mthomas@expanse-ln3:~/expanse101] module list
+Currently Loaded Modulefiles:
+1) cuda/10.1
+[mthomas@expanse-ln3:~/expanse101] which nvcc
+/usr/local/cuda-10.1/bin/nvcc
+</code></pre></div></div>
+
+<p><a href="#comp-and-run-cuda-jobs">Back to GPU/CUDA Jobs</a> <br />
+<a href="#top">Back to Top</a></p>
+<hr />
+
+<h3 id="gpucuda-example-hello-world"><a name="hello-world-gpu"></a>GPU/CUDA Example: Hello World</h3>
+<p><b>Subsections:</b></p>
+<ul>
+  <li><a href="#hello-world-gpu-compile">GPU Hello World: Compiling</a></li>
+  <li><a href="#hello-world-gpu-batch-submit">GPU Hello World: Batch Script Submission</a></li>
+  <li><a href="#hello-world-gpu-batch-output">GPU Hello World: Batch Job Output</a></li>
+</ul>
+
+<h4 id="gpu-hello-world-compiling"><a name="hello-world-gpu-compile"></a>GPU Hello World: Compiling</h4>
+<p>Simple hello runs a cuda command to get the device count
+on the node that job is assigned to. :</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[mthomas@expanse-ln3:~/expanse101] cd CUDA/hello_cuda
+[mthomas@expanse-ln3:~/expanse101/CUDA/hello_cuda] ll
+total 30
+drwxr-xr-x 2 mthomas use300   4 Apr 16 01:59 .
+drwxr-xr-x 4 mthomas use300  11 Apr 16 01:57 ..
+-rw-r--r-- 1 mthomas use300 313 Apr 16 01:59 hello_cuda.cu
+-rw-r--r-- 1 mthomas use300 269 Apr 16 01:58 hello_cuda.sb
+[mthomas@expanse-ln3:~/expanse101/CUDA/cuda_hello]  cat hello_cuda.cu
+/*
+* hello_cuda.cu
+* Copyright 1993-2010 NVIDIA Corporation.
+*    All right reserved
+*/
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+int main( void )
+{
+int deviceCount;
+cudaGetDeviceCount( &amp;deviceCount );
+printf("Hello, Webinar Participants! You have %d devices\n", deviceCount );
+return 0;
+}
+</code></pre></div></div>
+<ul>
+  <li>Compile using the <code class="language-plaintext highlighter-rouge">nvcc</code>&lt;/b&gt; command:
+```
+[mthomas@expanse-ln3:~/expanse101/CUDA/cuda_hello]  nvcc -o hello_cuda hello_cuda.cu
+[mthomas@expanse-ln3:~/expanse101/CUDA/cuda_hello]  ll hello_cuda
+-rwxr-xr-x 1 user use300 517437 Apr 10 19:35 hello_cuda
+-rw-r–r– 1 user use300    304 Apr 10 19:35 hello_cuda.cu
+[expanse-ln2:~/cuda/hello_cuda]</li>
+</ul>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[Back to GPU/CUDA Jobs](#comp-and-run-cuda-jobs) &lt;br&gt;
+[Back to Top](#top)
+&lt;hr&gt;
+
+#### &lt;a name="hello-world-gpu-batch-submit"&gt;&lt;/a&gt;GPU Hello World: Batch Script Submit
+
+* GPU jobs can be run via the slurm scheduler, or on interactive nodes.
+* The slurm scheduler batch script is shown below:
+</code></pre></div></div>
+<p>[mthomas@expanse-ln3:~/expanse101/CUDA/cuda_hello]  cat hello_cuda.sb
+#!/bin/bash
+#SBATCH –job-name=”hello_cuda”
+#SBATCH –output=”hello_cuda.%j.%N.out”
+#SBATCH –partition=gpu-shared
+#SBATCH –nodes=1
+#SBATCH –ntasks-per-node=12
+#SBATCH –gres=gpu:2
+#SBATCH -t 01:00:00</p>
+
+<h1 id="define-the-user-environment">Define the user environment</h1>
+<p>source /etc/profile.d/modules.sh
+module purge
+module load intel
+module load mvapich2_ib
+#Load the cuda module
+module load cuda</p>
+
+<p>#Run the job
+./hello_cuda</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>* Some of the batch script variables are described below. For more details see
+the Expanse user guide.
+* GPU nodes can be accessed via either the "gpu" or the "gpu-shared" partitions:
+</code></pre></div></div>
+<p>#SBATCH -p gpu</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>or
+</code></pre></div></div>
+<p>#SBATCH -p gpu-shared</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+In addition to the partition name (required), the type of gpu (optional) and 
+the individual GPUs are scheduled as a resource.
+</code></pre></div></div>
+<p>#SBATCH –gres=gpu[:type]:n</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+GPUs will be allocated on a first available, first schedule basis, unless specified with the [type] option, where type can be &lt;b&gt;`k80`&lt;/b&gt; or &lt;b&gt;`p100`&lt;/b&gt; Note: type is case sensitive.
+</code></pre></div></div>
+<p>#SBATCH –gres=gpu:4     #first available gpu node
+#SBATCH –gres=gpu:k80:4 #only k80 nodes
+#SBATCH –gres=gpu:p100:4 #only p100 nodes</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+&lt;b&gt;Submit the job&lt;/b&gt; &lt;br&gt;
+
+To run the job, type the batch script submission command:
+</code></pre></div></div>
+<p>[mthomas@expanse-ln3:~/expanse101/CUDA/cuda_hello]  sbatch hello_cuda.sb
+Submitted batch job 32663172
+[mthomas@expanse-ln3:~/expanse101/CUDA/cuda_hello]</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+&lt;b&gt;Monitor the job until it is finished:&lt;/b&gt;
+</code></pre></div></div>
+<p>[user@expanse-ln2:~/cuda/hello_cuda] squeue -u mthomas
+[mthomas@expanse-ln3:~/expanse101/CUDA/cuda_hello] sbatch hello_cuda.sb
+Submitted batch job 32663081
+[mthomas@expanse-ln3:~/expanse101/CUDA/cuda_hello] squeue -u mthomas
+JOBID PARTITION     NAME     USER ST       TIME  NODES NODELIST(REASON)
+32663081 gpu-share hello_cu  mthomas PD       0:00      1 (Resources)</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+[Back to GPU/CUDA Jobs](#comp-and-run-cuda-jobs) &lt;br&gt;
+[Back to Top](#top)
+&lt;hr&gt;
+
+#### &lt;a name="hello-world-gpu-batch-output"&gt;&lt;/a&gt;GPU Hello World: Batch Job Output
+</code></pre></div></div>
+<p>[mthomas@expanse-ln3:~/expanse101/CUDA/cuda_hello] cat hello_cuda.32663172.expanse-30-04.out</p>
+
+<p>Hello, Webinar Participants! You have 2 devices</p>
+
+<p>[mthomas@expanse-ln3:~/expanse101/CUDA/cuda_hello]</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+[Back to GPU/CUDA Jobs](#comp-and-run-cuda-jobs) &lt;br&gt;
+[Back to Top](#top)
+&lt;hr&gt;
+
+
+### &lt;a name="enum-gpu"&gt;&lt;/a&gt;GPU/CUDA Example: Enumeration
+
+Sections:
+* [GPU Enumeration: Compiling](#enum-gpu-compile)
+* [GPU Enumeration: Batch Script Submission](#enum-gpu-batch-submit)
+* [GPU Enumeration: Batch Job Output](#enum-gpu-batch-output )
+
+&lt;hr&gt;
+
+#### &lt;a name="enum-gpu-compile"&gt;&lt;/a&gt;GPU Enumeration: Compiling
+
+&lt;b&gt;GPU Enumeration Code:&lt;/b&gt;
+This code accesses the cudaDeviceProp object and returns information about the devices on the node. The list below is only some of the information that you can look for. The property values can be used to dynamically allocate or distribute your compute threads accross the GPU hardware in response to the GPU type.
+</code></pre></div></div>
+<p>[user@expanse-ln2:~/cuda/gpu_enum] cat gpu_enum.cu
+#include <stdio.h></stdio.h></p>
+
+<p>int main( void ) {
+cudaDeviceProp prop;
+int count;
+printf( “ — Obtaining General Information for CUDA devices  —\n” );
+cudaGetDeviceCount( &amp;count ) ;
+for (int i=0; i&lt; count; i++) {
+cudaGetDeviceProperties( &amp;prop, i ) ;
+printf( “ — General Information for device %d —\n”, i );
+printf( “Name: %s\n”, prop.name );</p>
+
+<p>printf( “Compute capability: %d.%d\n”, prop.major, prop.minor );
+printf( “Clock rate: %d\n”, prop.clockRate );
+printf( “Device copy overlap: “ );</p>
+
+<p>if (prop.deviceOverlap)
+printf( “Enabled\n” );
+else
+printf( “Disabled\n”);</p>
+
+<p>printf( “Kernel execution timeout : “ );</p>
+
+<p>if (prop.kernelExecTimeoutEnabled)
+printf( “Enabled\n” );
+else
+printf( “Disabled\n” );</p>
+
+<p>printf( “ — Memory Information for device %d —\n”, i );
+printf( “Total global mem: %ld\n”, prop.totalGlobalMem );
+printf( “Total constant Mem: %ld\n”, prop.totalConstMem );
+printf( “Max mem pitch: %ld\n”, prop.memPitch );
+printf( “Texture Alignment: %ld\n”, prop.textureAlignment );
+printf( “ — MP Information for device %d —\n”, i );
+printf( “Multiprocessor count: %d\n”, prop.multiProcessorCount );
+printf( “Shared mem per mp: %ld\n”, prop.sharedMemPerBlock );
+printf( “Registers per mp: %d\n”, prop.regsPerBlock );
+printf( “Threads in warp: %d\n”, prop.warpSize );
+printf( “Max threads per block: %d\n”, prop.maxThreadsPerBlock );
+printf( “Max thread dimensions: (%d, %d, %d)\n”, prop.maxThreadsDim[0], prop.maxThreadsDim[1], prop.maxThreadsDim[2] );
+printf( “Max grid dimensions: (%d, %d, %d)\n”, prop.maxGridSize[0], prop.maxGridSize[1], prop.maxGridSize[2] );
+printf( “\n” );
+}
+}</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+To compile: check your environment and use the CUDA &lt;b&gt;`nvcc`&lt;/b&gt; command:
+</code></pre></div></div>
+<p>[expanse-ln2:~/cuda/gpu_enum] module purge
+[expanse-ln2:~/cuda/gpu_enum] which nvcc
+/usr/bin/which: no nvcc in (/usr/lib64/qt-3.3/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin:/opt/sdsc/bin:/opt/sdsc/sbin:/opt/ibutils/bin:/usr/java/latest/bin:/opt/pdsh/bin:/opt/rocks/bin:/opt/rocks/sbin:/home/user/bin)
+[expanse-ln2:~/cuda/gpu_enum] module load cuda
+[expanse-ln2:~/cuda/gpu_enum] which nvcc
+/usr/local/cuda-7.0/bin/nvcc
+[expanse-ln2:~/cuda/gpu_enum] nvcc -o gpu_enum -I.  gpu_enum.cu
+[expanse-ln2:~/cuda/gpu_enum] ll gpu_enum
+-rwxr-xr-x 1 user use300 517632 Apr 10 18:39 gpu_enum
+[expanse-ln2:~/cuda/gpu_enum]</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[Back to GPU/CUDA Jobs](#comp-and-run-cuda-jobs) &lt;br&gt;
+[Back to Top](#top)
+&lt;hr&gt;
+
+#### &lt;a name="enum-gpu-batch-submit"&gt;&lt;/a&gt;GPU Enumeration: Batch Script Submission
+&lt;b&gt;Contents of the Slurm script &lt;/b&gt;
+Script is asking for 1 GPU.
+
+</code></pre></div></div>
+<p>[expanse-ln2: ~/cuda/gpu_enum] cat gpu_enum.sb
+#!/bin/bash
+#SBATCH –job-name=”gpu_enum”
+#SBATCH –output=”gpu_enum.%j.%N.out”
+#SBATCH –partition=gpu-shared          # define GPU partition
+#SBATCH –nodes=1
+#SBATCH –ntasks-per-node=6
+#SBATCH –gres=gpu:1         # define type of GPU
+#SBATCH -t 00:05:00</p>
+
+<h1 id="define-the-user-environment-1">Define the user environment</h1>
+<p>source /etc/profile.d/modules.sh
+module purge
+module load intel
+module load mvapich2_ib
+#Load the cuda module
+module load cuda</p>
+
+<p>#Run the job
+./gpu_enum</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+&lt;b&gt;Submit the job &lt;/b&gt;
+* To run the job, type the batch script submission command:
+</code></pre></div></div>
+<p>[mthomas@expanse-ln3:~/expanse101/CUDA/gpu_enum] sbatch hello_cuda.sb
+Submitted batch job 32663364</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;b&gt;Monitor the job &lt;/b&gt;
+* You can monitor the job until it is finished using the `sqeue` command:
+</code></pre></div></div>
+<p>[mthomas@expanse-ln3:~/expanse101/CUDA/gpu_enum] squeue -u mthomas
+JOBID PARTITION     NAME     USER ST       TIME  NODES NODELIST(REASON)
+32663364 gpu-share gpu_enum  mthomas PD       0:00      1 (Resources)</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[Back to GPU/CUDA Jobs](#comp-and-run-cuda-jobs) &lt;br&gt;
+[Back to Top](#top)
+&lt;hr&gt;
+
+#### &lt;a name="enum-gpu-batch-output"&gt;&lt;/a&gt;GPU Enumeration: Batch Job Output
+
+* Output from script is for multiple devices, which is what was specified in script.
+
+</code></pre></div></div>
+<p>[user@expanse-ln2:~/cuda/gpu_enum] cat gpu_enum.22527745.expanse-31-10.out
+— Obtaining General Information for CUDA devices  —
+— General Information for device 0 —
+— Obtaining General Information for CUDA devices  —
+— General Information for device 0 —
+Name: Tesla P100-PCIE-16GB
+Compute capability: 6.0
+Clock rate: 1328500
+Device copy overlap: Enabled
+Kernel execution timeout : Disabled
+— Memory Information for device 0 —
+Total global mem: 17071734784
+Total constant Mem: 65536
+Max mem pitch: 2147483647
+Texture Alignment: 512
+— MP Information for device 0 —
+Multiprocessor count: 56
+Shared mem per mp: 49152
+Registers per mp: 65536
+Threads in warp: 32
+Max threads per block: 1024
+Max thread dimensions: (1024, 1024, 64)
+Max grid dimensions: (2147483647, 65535, 65535)</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>* If we change the batch script to ask for 2 devices (see line 8):
+</code></pre></div></div>
+<p>1 #!/bin/bash
+2 #SBATCH –job-name=”gpu_enum”
+3 #SBATCH –output=”gpu_enum.%j.%N.out”
+4 #SBATCH –partition=gpu-shared          # define GPU partition
+5 #SBATCH –nodes=1
+6 #SBATCH –ntasks-per-node=6
+7 ####SBATCH –gres=gpu:1         # define type of GPU
+8 #SBATCH –gres=gpu:2         # first available
+9 #SBATCH -t 00:05:00
+10
+11 # Define the user environment
+12 source /etc/profile.d/modules.sh
+13 module purge
+14 module load intel
+15 module load mvapich2_ib
+16 #Load the cuda module
+17 module load cuda
+18
+19 #Run the job
+20 ./gpu_enum</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+The output will show information for two devices:
+</code></pre></div></div>
+<p>[mthomas@expanse-ln3:~/expanse101/CUDA/gpu_enum] sbatch gpu_enum.sb
+!Submitted batch job 32663404
+[mthomas@expanse-ln3:~/expanse101/CUDA/gpu_enum] squeue -u mthomas
+JOBID PARTITION     NAME     USER ST       TIME  NODES NODELIST(REASON)
+32663404 gpu-share gpu_enum  mthomas CG       0:02      1 expanse-33-03
+[mthomas@expanse-ln3:~/expanse101/CUDA/gpu_enum] cat gpu_enumX.32663404.expanse-33-03.out
+— Obtaining General Information for CUDA devices  —
+— General Information for device 0 —
+Name: Tesla P100-PCIE-16GB
+Compute capability: 6.0
+Clock rate: 1328500
+Device copy overlap: Enabled
+Kernel execution timeout : Disabled
+— Memory Information for device 0 —
+Total global mem: 17071734784
+Total constant Mem: 65536
+Max mem pitch: 2147483647
+Texture Alignment: 512
+— MP Information for device 0 —
+Multiprocessor count: 56
+Shared mem per mp: 49152
+Registers per mp: 65536
+Threads in warp: 32
+Max threads per block: 1024
+Max thread dimensions: (1024, 1024, 64)
+Max grid dimensions: (2147483647, 65535, 65535)</p>
+
+<p>— General Information for device 1 —
+Name: Tesla P100-PCIE-16GB
+Compute capability: 6.0
+Clock rate: 1328500
+Device copy overlap: Enabled
+Kernel execution timeout : Disabled
+— Memory Information for device 1 —
+Total global mem: 17071734784
+Total constant Mem: 65536
+Max mem pitch: 2147483647
+Texture Alignment: 512
+— MP Information for device 1 —
+Multiprocessor count: 56
+Shared mem per mp: 49152
+Registers per mp: 65536
+Threads in warp: 32
+Max threads per block: 1024
+Max thread dimensions: (1024, 1024, 64)
+Max grid dimensions: (2147483647, 65535, 65535)</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+[Back to GPU/CUDA Jobs](#comp-and-run-cuda-jobs) &lt;br&gt;
+[Back to Top](#top)
+&lt;hr&gt;
+
+### &lt;a name="mat-mul-gpu"&gt;&lt;/a&gt;GPU/CUDA Example: Matrix-Multiplication
+&lt;b&gt;Subsections:&lt;/b&gt;
+* [Matrix Mult. (GPU): Compiling](#mat-mul-gpu-compile)
+* [Matrix Mult. (GPU): Batch Script Submission](#mat-mul-gpu-batch-submit)
+* [Matrix Mult. (GPU): Batch Job Output](#mat-mul-gpu-batch-output )
+
+#### &lt;a name="mat-mul-gpu"&gt;&lt;/a&gt;CUDA Example: Matrix-Multiplication
+&lt;b&gt;Change to the CUDA Matrix-Multiplication example directory:&lt;/b&gt;
+</code></pre></div></div>
+<p>[mthomas@expanse-ln3:~/expanse101/CUDA/matmul] ll
+total 454
+drwxr-xr-x 2 mthomas use300     11 Apr 16 02:59 .
+drwxr-xr-x 5 mthomas use300      5 Apr 16 02:37 ..
+-rw-r–r– 1 mthomas use300    253 Apr 16 01:56 cuda_matmul.sb
+-rw-r–r– 1 mthomas use300   5106 Apr 16 01:46 exception.h
+-rw-r–r– 1 mthomas use300   1168 Apr 16 01:46 helper_functions.h
+-rw-r–r– 1 mthomas use300  29011 Apr 16 01:46 helper_image.h
+-rw-r–r– 1 mthomas use300  23960 Apr 16 01:46 helper_string.h
+-rw-r–r– 1 mthomas use300  15414 Apr 16 01:46 helper_timer.h
+-rwxr-xr-x 1 mthomas use300 652768 Apr 16 01:46 matmul
+-rw-r–r– 1 mthomas use300  13482 Apr 16 02:36 matmul.cu
+-rw-r–r– 1 mthomas use300    370 Apr 16 02:59 matmul.sb</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+[Back to GPU/CUDA Jobs](#comp-and-run-cuda-jobs) &lt;br&gt;
+[Back to Top](#top)
+&lt;hr&gt;
+
+#### &lt;a name="mat-mul-gpu-compile"&gt;&lt;/a&gt;Compiling CUDA Example (GPU)
+
+&lt;b&gt; Compile the code:&lt;/b&gt;
+</code></pre></div></div>
+<p>[user@expanse-ln2 CUDA]$ nvcc -o matmul -I.  matrixMul.cu
+[user@expanse-ln2 CUDA]$ ll
+total 172
+drwxr-xr-x  2 user user300     13 Aug  6 00:53 .
+drwxr-xr-x 16 user user300     16 Aug  5 19:02 ..
+-rw-r–r–  1 user user300    458 Aug  6 00:35 CUDA.18347152.expanse-33-02.out
+-rw-r–r–  1 user user300    458 Aug  6 00:37 CUDA.18347157.expanse-33-02.out
+-rw-r–r–  1 user user300    446 Aug  5 19:02 CUDA.8718375.expanse-30-08.out
+-rw-r–r–  1 user user300    253 Aug  5 19:02 cuda.sb
+-rw-r–r–  1 user user300   5106 Aug  5 19:02 exception.h
+-rw-r–r–  1 user user300   1168 Aug  5 19:02 helper_functions.h
+-rw-r–r–  1 user user300  29011 Aug  5 19:02 helper_image.h
+-rw-r–r–  1 user user300  23960 Aug  5 19:02 helper_string.h
+-rw-r–r–  1 user user300  15414 Aug  5 19:02 helper_timer.h
+-rwxr-xr-x  1 user user300 533168 Aug  6 00:53 matmul
+-rw-r–r–  1 user user300  13482 Aug  6 00:50 matrixMul.cu</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+[Back to GPU/CUDA Jobs](#comp-and-run-cuda-jobs) &lt;br&gt;
+[Back to Top](#top)
+&lt;hr&gt;
+
+#### &lt;a name="mat-mul-gpu-batch-submit"&gt;&lt;/a&gt;Matrix Mult. (GPU): Batch Script Submission
+
+&lt;b&gt;Contents of the slurm script:&lt;/b&gt;
+</code></pre></div></div>
+<p>[user@expanse-ln2 CUDA]$ cat cuda.sb
+#!/bin/bash
+#SBATCH –job-name=”matmul”
+#SBATCH –output=”matmul.%j.%N.out”
+#SBATCH –partition=gpu-shared
+#SBATCH –nodes=1
+#SBATCH –ntasks-per-node=6
+#SBATCH –gres=gpu:1
+#SBATCH -t 00:10:00</p>
+
+<h1 id="define-the-user-environment-2">Define the user environment</h1>
+<p>source /etc/profile.d/modules.sh
+module purge
+module load intel
+module load mvapich2_ib
+#Load the cuda module
+module load cuda</p>
+
+<p>#Run the job
+./matmul</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;b&gt; Submit the job:&lt;/b&gt;
+</code></pre></div></div>
+<p>[mthomas@expanse-ln3:~/expanse101/CUDA/matmul] sbatch matmul.sb
+Submitted batch job 32663647</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;b&gt;Monitor the job:&lt;/b&gt;
+</code></pre></div></div>
+<p>[mthomas@expanse-ln3:~/expanse101/CUDA/matmul] squeue -u mthomas
+JOBID PARTITION     NAME     USER ST       TIME  NODES NODELIST(REASON)
+32663647 gpu-share   matmul  mthomas PD       0:00      1 (Resources)
+[mthomas@expanse-ln3:~/expanse101/CUDA/matmul]</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[Back to GPU/CUDA Jobs](#comp-and-run-cuda-jobs) &lt;br&gt;
+[Back to Top](#top)
+&lt;hr&gt;
+
+#### &lt;a name="mat-mul-gpu-batch-output"&gt;&lt;/a&gt;Matrix Mult. (GPU): Batch Job Output
+
+</code></pre></div></div>
+<p>[mthomas@expanse-ln3:~/expanse101/CUDA/matmul] cat matmul.32663647.expanse-33-03.out
+[Matrix Multiply Using CUDA] - Starting…
+GPU Device 0: “Tesla P100-PCIE-16GB” with compute capability 6.0</p>
+
+<p>MatrixA(320,320), MatrixB(640,320)
+Computing result using CUDA Kernel…
+done
+Performance= 1676.99 GFlop/s, Time= 0.078 msec, Size= 131072000 Ops, WorkgroupSize= 1024 threads/block
+Checking computed result for correctness: Result = PASS</p>
+
+<p>NOTE: The CUDA Samples are not meant for performance measurements. Results may
+vary when GPU Boost is enabled.
+```</p>
+
+<p><a href="#comp-and-run-cuda-jobs">Back to GPU/CUDA Jobs</a> <br />
+<a href="#top">Back to Top</a></p>
+<hr />
+
+:ET

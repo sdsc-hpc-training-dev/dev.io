@@ -1,0 +1,132 @@
+I"�,<p>#</p>
+
+<p>Running Juypter notebooks relies on you handling your own python jupyter package installation. Typically, users install Anaconda on local systems. Anaconda is a common package manager used for data science, but it it not recommended for use on HPC systems and running jupyter notebooks remotely. Anaconda is a large package and has a lot of overhead. For best performance, we recommend using <code class="language-plaintext highlighter-rouge">Miniconda</code>.</p>
+
+<p><a href="https://docs.conda.io/en/latest/miniconda.html">Miniconda</a> is a free minimal installer for conda. It is a small, bootstrap version of Anaconda that includes only conda, Python, the packages they depend on, and a small number of other useful packages.</p>
+
+<p>If you’re not familiar with Anaconda, check it out <a href="https://www.anaconda.com/products/individual">here</a>.</p>
+
+<h2 id="install-miniconda">Install Miniconda</h2>
+<p>To install Miniconda on Linux, you need to locate and download the installer package for your system. For linx, you will find a list of installers <a href="https://docs.conda.io/en/latest/miniconda.html#linux-installers">https://docs.conda.io/en/latest/miniconda.html#linux-installers</a>. On the HPC system, use:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wget &lt;link-to-installer-file&gt;
+</code></pre></div></div>
+<p>to download the install package. For SDSC HPC systems, the current link is the <code class="language-plaintext highlighter-rouge">Miniconda3 Linux 64-bit:</code> <code class="language-plaintext highlighter-rouge">https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh</code></p>
+
+<p>Once you have downloaded the correct installer, follow the installation instructions <a href="https://conda.io/projects/conda/en/latest/user-guide/install/index.html">https://conda.io/projects/conda/en/latest/user-guide/install/index.html</a>. For SDSC HPC systems Comet, TSCC, and Stratus, the name of the downloaded installer file is <code class="language-plaintext highlighter-rouge">Miniconda3-latest-Linux-x86_64.sh</code></p>
+
+<h3 id="run-the-installer">Run the installer</h3>
+<p>Change the permissions so you can execute the script:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>chmod +x Miniconda3-latest-Linux-x86_64.sh
+</code></pre></div></div>
+<p>Run the bash install script:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>bash Miniconda3-latest-Linux-x86_64.sh
+</code></pre></div></div>
+<p>or</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>./Miniconda3-latest-Linux-x86_64.sh
+</code></pre></div></div>
+<p>You should answer yes to almost all of the questions. Make sure to type in the word “yes” for the license agreement.
+Also be sure to type in “yes” when the installer asks you if you want to run conda init.
+In addition, you need to make sure that the installer has placed these two lines into your <code class="language-plaintext highlighter-rouge">.bashrc</code> file:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>The Miniconda installer should prompt to add each of the following lines separately to the .bashrc file:
+
+. /home/$USER/miniconda3/etc/profile.d/conda.sh
+conda activate
+</code></pre></div></div>
+<p>If not present, add the two lines to the file. Once you have done this, restart your bash shell: 
+run the command</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>source ~/.bashrc
+</code></pre></div></div>
+<p>which “restarts” the shell environment.</p>
+
+<p>Miniconda should now be installed. By default, Miniconda should be installed in your home directory:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Miniconda3 will now be installed into this location:
+/home/$USER/miniconda3
+</code></pre></div></div>
+<p>If Miniconda still does not seem to be installed, try using the command <code class="language-plaintext highlighter-rouge">source ~/.bashrc</code>, which “restarts” conda.</p>
+
+<p>To verify the installation, run the command:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>(base) [mthomas@comet-ln2:~] which conda
+~/miniconda3/bin/conda
+</code></pre></div></div>
+
+<h2 id="install-jupyter-notebook">Install Jupyter Notebook</h2>
+<p>To run jupyter notebooks,  you need to install the <code class="language-plaintext highlighter-rouge">jupyter</code> package using the command</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>conda install jupyter
+</code></pre></div></div>
+<p>To verify the installation, run the command:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>(base) [$USER@comet-ln2:~] which jupyter
+~/miniconda3/bin/jupyter
+</code></pre></div></div>
+<p>More installation information can be found here: <a href="https://anaconda.org/anaconda/jupyter">https://anaconda.org/anaconda/jupyter</a>.</p>
+
+<h2 id="install-jupyterlab">Install JupyterLab</h2>
+<p>JupyterLab is designed as an extensible environment and can be installed with conda, pip, docker, etc. For full details, see:  <a href="https://jupyterlab.readthedocs.io/en/stable/getting_started/installation.html">https://jupyterlab.readthedocs.io/en/stable/getting_started/installation.html</a></p>
+
+<p>To use <code class="language-plaintext highlighter-rouge">conda</code> to install jupyerlab, run the terminal command:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>conda install -c conda-forge jupyterlab
+</code></pre></div></div>
+<p>To verify the installation, run the command:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>(base) [$USER@comet-ln2:~] which jupyter-labextension
+~/miniconda3/bin/jupyter-labextension
+</code></pre></div></div>
+
+<h2 id="other-python-packages">Other Python Packages**</h2>
+<p>Any other Python packages you need to run your notebook should be installed with Conda. You can install python packages in a conda environment while your notebook is running. This is useful if you forgot a package, you won’t have to worry about cancelling and restarting your job before installing. However, it is recommended that you install all required packages beforehand to save yourself valuable compute time.</p>
+
+<h2 id="setup-a-conda-virtual-environment">Setup a Conda Virtual Environment</h2>
+<p>Choose whatever name you want - it should reflect the application/project you are working on.
+<code class="language-plaintext highlighter-rouge">$ conda create --name example_env</code></p>
+
+<h3 id="to-see-which-virtual-environments-youve-created">To see which virtual environments you’ve created</h3>
+<p><code class="language-plaintext highlighter-rouge">$ conda env list</code></p>
+
+<p>To use a particular virtual environment (e.g., one named ‘example_env’):
+<code class="language-plaintext highlighter-rouge">$ source activate example_env # Note: don’t use ‘conda activate’</code></p>
+
+<h3 id="to-see-which-versions-of-a-package-are-available">To see which versions of a package are available</h3>
+<p><code class="language-plaintext highlighter-rouge">(example_env) $ conda search package_name</code>
+This searches for packages from the default “channel.”  Other channels might have newer versions available.  For instance, we’ve seen more recent versions of the ‘yt’ package in the channel named “conda-forge”.  To install from a different channel, use something like:
+<code class="language-plaintext highlighter-rouge">(example_env) $ conda search -c conda-forge yt</code></p>
+
+<h3 id="to-install-packages-in-an-active-virtual-environment">To install packages in an active virtual environment</h3>
+<p><code class="language-plaintext highlighter-rouge">(example_env) $ conda install package_name  # e.g, like ‘yt’</code>
+As with the package search, you can install from a different channel using a ‘-c channel_name’ flag, e.g.:
+<code class="language-plaintext highlighter-rouge">(example_env) $ conda install -c conda-forge yt</code></p>
+
+<h3 id="to-update-a-package-to-a-newer-version">To update a package to a newer version</h3>
+<p><code class="language-plaintext highlighter-rouge">(example_env) $ conda update package_name</code>
+Like install and search, this command can take a ‘-c channel-name’ flag if you want to update to newer versions than are in the default channel.</p>
+
+<h3 id="to-start-a-python-interpreter-with-access-to-the-installed-packages">To start a Python interpreter with access to the installed packages:</h3>
+<p><code class="language-plaintext highlighter-rouge">(example_env) $ python    # python3 works as well</code></p>
+
+<h3 id="to-stop-using-the-current-virtual-environment">To stop using the current virtual environment:</h3>
+<p><code class="language-plaintext highlighter-rouge">(example_env) $ source deactivate</code></p>
+
+<h3 id="to-delete-an-inactive-virtual-environment">To delete an inactive virtual environment:</h3>
+<p><code class="language-plaintext highlighter-rouge">$ conda env remove --name example_env</code></p>
+
+<h2 id="install-jupyternotebooks-and-jupyterlab">Install JupyterNotebooks and Jupyterlab</h2>
+
+<p>You’ll need to install jupyter using <code class="language-plaintext highlighter-rouge">conda install jupyter</code>. More info <a href="https://anaconda.org/anaconda/jupyter">here</a>.
+If you want to use <code class="language-plaintext highlighter-rouge">Jupyterlab</code>, install that.</p>
+
+<h2 id="other-python-packages-1">Other Python Packages</h2>
+<p>Any other Python packages you need to run your notebook should be installed with Conda. You can install python packages in a conda environment while your notebook is running. This is useful if you forgot a package, you won’t have to worry about cancelling and restarting your job before installing. However, it is recommended that you install all required packages beforehand to save yourself valuable compute time.</p>
+
+<h2 id="download-example-notebooks">Download Example Notebooks</h2>
+<p>For these examples, you should have some simple notebooks loaded into your comet directory for testing. You can clone the notebooks examples repository:
+To clone the repo, log onto comet, cd into the directory where you want to work, and type:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git clone https://github.com/sdsc-hpc-training-org/notebook-examples.git
+</code></pre></div></div>
+
+<h2 id="basic-hpc-skills">Basic HPC Skills</h2>
+
+<p>If you are a beginner, or need to brush up on some basic skills needed to run jobs on HPC systems, check out our repo:</p>
+
+<p><a href="https://github.com/sdsc-hpc-training-org/basic_skills">Basic Skill</a></p>
+
+<p>To clone the repo, log onto comet, cd into the directory where you want to work, and type:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git clone https://github.com/sdsc-hpc-training-org/basic_skills.git
+</code></pre></div></div>
+:ET

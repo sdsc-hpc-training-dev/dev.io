@@ -2,6 +2,7 @@
 layout: default
 title: Comet 101 Introduction
 nav_order: 3
+parent: Comet 101
 ---
 
 # Comet 101: Introduction to Running Jobs on Comet Supercomputer

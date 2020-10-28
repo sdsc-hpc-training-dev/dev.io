@@ -1,12 +1,12 @@
 ---
 layout: default
-title: Security with Reverse Proxy Service
+title: Jupyter Reverse Proxy Service
 parent: Example Notebooks
 grand_parent: notebooks-101
 nav_order: 6
 ---
 
-## Security with Reverse Proxy Service
+## Jupyter Reverse Proxy Service
 * Connection to Notebook over HTTPS using the [Reverse Proxy Service](https://github.com/sdsc-hpc-training-org/reverse-proxy)  (very secure)
 
 ### Overview

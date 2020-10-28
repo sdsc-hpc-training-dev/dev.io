@@ -1,12 +1,9 @@
 ---
 layout: default
-title:  Comet 101
+title: Comet 101 Introduction
 nav_order: 3
-has_children: true
-permalink: /docs/comet
 ---
 
-#Hello World!!!!
 # Comet 101: Introduction to Running Jobs on Comet Supercomputer
 
 Presented by Mary Thomas (SDSC,  <mpthomas@ucsd.edu> )

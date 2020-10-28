@@ -1,8 +1,9 @@
 ---
 layout: default
-title: Comet 101 Tutorial
-parent: Comet 101
+title: Comet 101
+has_children: true
 nav_order: 0
+permalink: /docs/comet
 ---
 
 

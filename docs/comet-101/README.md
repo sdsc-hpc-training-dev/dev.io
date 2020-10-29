@@ -12,7 +12,7 @@ permalink: /docs/comet
 ## NOTES:
 
 ## Interactive Video Link:
-This material was presented as part of a webinar presented on xxxxx.
+This material was presented as part of a webinar presented on 04/16/20.
 The link to the presentation can be found here:
 
 https://education.sdsc.edu/training/interactive/202004_intro_to_comet/index.php

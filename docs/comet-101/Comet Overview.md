@@ -2,7 +2,7 @@
 layout: default
 title: Comet Overview
 parent: Comet 101
-nav_order: 1
+nav_order: 2
 ---
 ## <a name="overview"></a>Comet Overview:
 

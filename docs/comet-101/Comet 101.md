@@ -1,11 +1,11 @@
 ---
 layout: default
-title: Comet 101 Introduction
+title: Introduction
 nav_order: 1
 parent: Comet 101
 ---
 
-# Comet 101: Introduction to Running Jobs on Comet Supercomputer
+# Introduction to Running Jobs on Comet Supercomputer
 
 Presented by Mary Thomas (SDSC,  <mpthomas@ucsd.edu> )
 <hr>

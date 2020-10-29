@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Comet 101 Introduction
-nav_order: 11
+nav_order: 1
 parent: Comet 101
 ---
 

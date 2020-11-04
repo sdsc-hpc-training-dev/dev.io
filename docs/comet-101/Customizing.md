@@ -2,6 +2,7 @@
 layout: default
 title: Customizing Your User Environment
 parent: Introduction
+grand_parent: Comet 101
 nav_order: 3
 ---
 ## <a name="modules"></a>Modules: Customizing Your User Environment

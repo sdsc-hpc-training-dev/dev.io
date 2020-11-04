@@ -2,7 +2,7 @@
 layout: default
 title: Compiling and Running CPU Jobss
 parent: Hands-on Examples
-grand_parent: Introduction
+grand_parent: Comet 101
 nav_order: 6
 ---
 ## Compiling and Running CPU Jobs: <a name="comp-and-run-cpu-jobs"></a>

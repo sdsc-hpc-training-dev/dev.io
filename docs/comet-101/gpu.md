@@ -2,7 +2,7 @@
 layout: default
 title: comp-and-run-cuda-jobs
 parent: Hands-on Examples
-grand_parent: Introduction
+grand_parent: Comet 101
 nav_order: 6
 ---
 ## <a name="comp-and-run-cuda-jobs"></a>Compiling and Running GPU/CUDA Jobs

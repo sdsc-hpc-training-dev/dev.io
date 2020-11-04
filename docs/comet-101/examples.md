@@ -2,6 +2,7 @@
 layout: default
 title: Hands-on Examples
 parent: Introduction
+grand_parent: Comet 101
 nav_order: 6
 has_children: true
 permalink: /docs/comet/examples

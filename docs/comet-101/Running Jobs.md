@@ -2,6 +2,7 @@
 layout: default
 title: Running Jobs on Comet
 parent: Introduction
+grand_parent: Comet 101
 nav_order: 5
 ---
 ## Running Jobs on Comet <a name="running-jobs"></a>

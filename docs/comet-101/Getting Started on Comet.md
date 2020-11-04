@@ -2,6 +2,7 @@
 layout: default
 title: Getting Started on Comet
 parent: Introduction
+grand_parent: Comet 101
 nav_order: 2
 ---
 ## <a name="sys-env"></a>Getting Started on Comet

@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Compiling & Linking
-parent: Comet 101
+parent: Introduction
 nav_order: 4
 ---
 ## <a name="compilers"></a>Compiling & Linking

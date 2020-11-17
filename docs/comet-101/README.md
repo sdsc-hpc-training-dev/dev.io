@@ -2,7 +2,7 @@
 layout: default
 title: Comet 101
 has_children: true
-nav_order: 0
+nav_order: 7
 permalink: /docs/comet
 ---
 

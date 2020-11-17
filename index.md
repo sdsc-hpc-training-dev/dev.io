@@ -6,6 +6,6 @@ description: " Training Material for SDSC "
 permalink: /
 ---
 
-# Main Page Under construction
+# Welcome to the SDSC HPC Training Tutorials Page
 
-Maybe some overview of SDSC should appaer here
+“Click on the menu items on the left to see them expand to show more training content.”

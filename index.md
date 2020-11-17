@@ -7,6 +7,7 @@ permalink: /
 ---
 
 # Welcome to the SDSC HPC Training Tutorials Page
+## File:  index.md
 
 “Click on the menu items on the left to see them expand to show more training content.”
 

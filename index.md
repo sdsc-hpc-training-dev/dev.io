@@ -1,7 +1,7 @@
 ---
 layout: default
 title: SDSC training 101 Home
-nav_order: -1
+nav_order: 0
 description: " Training Material for SDSC "
 permalink: /
 ---

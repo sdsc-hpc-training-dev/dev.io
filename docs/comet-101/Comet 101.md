@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Introduction
-nav_order: 2
+nav_order: 7
 has_children: true
 parent: Comet 101
 ---

@@ -4,7 +4,7 @@ title: Software Prerequisites
 parent: notebooks-101
 nav_order: 1
 ---
-# 
+# Software Prerequisites 
 
 Running Juypter notebooks relies on you handling your own python jupyter package installation. Typically, users install Anaconda on local systems. Anaconda is a common package manager used for data science, but it it not recommended for use on HPC systems and running jupyter notebooks remotely. Anaconda is a large package and has a lot of overhead. For best performance, we recommend using `Miniconda`. 
 

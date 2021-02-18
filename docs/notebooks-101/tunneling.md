@@ -6,6 +6,8 @@ grand_parent: notebooks-101
 nav_order: 6
 ---
 
+# Security with SSH Tunneling
+
 ## Security with SSH Tunneling
 Connection to Notebook over SSH tunneling (secure)
 

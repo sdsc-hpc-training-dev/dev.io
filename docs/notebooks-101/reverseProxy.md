@@ -6,10 +6,10 @@ grand_parent: notebooks-101
 nav_order: 6
 ---
 
-## Jupyter Reverse Proxy Service
+# Jupyter Reverse Proxy Service
 * Connection to Notebook over HTTPS using the [Reverse Proxy Service](https://github.com/sdsc-hpc-training-org/reverse-proxy)  (very secure)
 
-### Overview
+## Overview
 
 ![arch](https://github.com/sdsc-hpc-training-org/notebooks-101/raw/master/Docs/images/Reverse-Proxy-Service-for-Secure-Jupyter-Notebooks-Arch.png?raw=true)
 

@@ -6,6 +6,8 @@ grand_parent: notebooks-101
 nav_order: 6
 ---
 
+# HTTP Connection
+
 ## Insecurity with direct node access
 
 This section described how to connection between the browser on your local host (laptop) to a Jupyter service running on Comet over HTTP and demonstrates why the connection is *not* secure.
